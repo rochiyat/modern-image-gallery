@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Modern Image Gallery",
   description:
-    "Beautiful Modern image gallery, filters, search, and dark mode",
+    "Beautiful Modern Image Gallery, filters, search, and dark mode",
 };
 
 export default function RootLayout({
