@@ -1,16 +1,31 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import GalleryGrid from "@/components/GalleryGrid";
 import SearchBar from "@/components/SearchBar";
 import FilterBar from "@/components/FilterBar";
 import Lightbox from "@/components/Lightbox";
+import ViewToggle from "@/components/ViewToggle";
+import PaginationControls from "@/components/PaginationControls";
 import { images } from "@/lib/data";
+import { Button } from "@/components/ui/button";
+import { Settings2 } from "lucide-react";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [paginationMode, setPaginationMode] = useState<"pagination" | "infinite">("pagination");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [visibleCount, setVisibleCount] = useState(12);
+  const itemsPerPage = 12;
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+    setVisibleCount(itemsPerPage);
+  }, [searchQuery, selectedCategory]);
 
   const filteredImages = useMemo(() => {
     return images.filter((image) => {
@@ -26,6 +41,34 @@ export default function Home() {
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, selectedCategory]);
+
+  const displayedImages = useMemo(() => {
+    if (paginationMode === "pagination") {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      return filteredImages.slice(startIndex, startIndex + itemsPerPage);
+    } else {
+      return filteredImages.slice(0, visibleCount);
+    }
+  }, [filteredImages, paginationMode, currentPage, visibleCount]);
+
+  const totalPages = Math.ceil(filteredImages.length / itemsPerPage);
+
+  // Infinite scroll handler
+  useEffect(() => {
+    if (paginationMode !== "infinite") return;
+
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 100
+      ) {
+        setVisibleCount((prev) => Math.min(prev + itemsPerPage, filteredImages.length));
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [paginationMode, filteredImages.length]);
 
   return (
     <>
@@ -48,10 +91,26 @@ export default function Home() {
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
             />
-            <FilterBar
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-            />
+            
+            <div className="flex flex-col md:flex-row items-center gap-4 w-full max-w-4xl justify-between">
+              <FilterBar
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
+              />
+              
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPaginationMode(prev => prev === "pagination" ? "infinite" : "pagination")}
+                  className="gap-2"
+                >
+                  <Settings2 className="h-4 w-4" />
+                  {paginationMode === "pagination" ? "Pagination" : "Infinite Scroll"}
+                </Button>
+                <ViewToggle viewMode={viewMode} onViewChange={setViewMode} />
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -61,9 +120,24 @@ export default function Home() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className="mb-4 text-center text-sm text-muted-foreground">
-            Showing {filteredImages.length} of {images.length} images
+            Showing {displayedImages.length} of {filteredImages.length} images
           </div>
-          <GalleryGrid images={filteredImages} />
+          
+          <GalleryGrid images={displayedImages} viewMode={viewMode} />
+
+          {paginationMode === "pagination" && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          )}
+          
+          {paginationMode === "infinite" && visibleCount < filteredImages.length && (
+             <div className="text-center mt-8 text-muted-foreground animate-pulse">
+               Loading more...
+             </div>
+          )}
         </motion.div>
       </div>
 
