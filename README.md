@@ -1,4 +1,4 @@
-# 🖼️ Image Gallery with Lightbox
+# 🖼️ Modern Image Gallery
 
 A beautiful, feature-rich image gallery built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
 
@@ -47,7 +47,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-image-gallery-with-lightbox/
+modern-image-gallery/
 ├── app/
 │   ├── layout.tsx          # Root layout with theme provider
 │   ├── page.tsx            # Main gallery page

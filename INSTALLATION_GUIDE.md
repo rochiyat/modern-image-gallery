@@ -1,4 +1,4 @@
-# 📦 Installation Guide - Image Gallery with Lightbox
+# 📦 Installation Guide - Modern Image Gallery
 
 ## ✅ Project Status: COMPLETE
 
@@ -58,7 +58,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-image-gallery-with-lightbox/
+modern-image-gallery/
 ├── 📄 Configuration Files
 │   ├── package.json           # Dependencies & scripts
 │   ├── tsconfig.json          # TypeScript config
@@ -220,7 +220,7 @@ npm start
 # 1. Push ke GitHub
 git init
 git add .
-git commit -m "Initial commit: Image Gallery with Lightbox"
+git commit -m "Initial commit: Modern Image Gallery"
 git remote add origin https://github.com/username/repo.git
 git push -u origin main
 

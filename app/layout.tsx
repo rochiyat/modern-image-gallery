@@ -7,9 +7,9 @@ import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Image Gallery with Lightbox",
+  title: "Modern Image Gallery",
   description:
-    "Beautiful image gallery with lightbox, filters, search, and dark mode",
+    "Beautiful Modern image gallery, filters, search, and dark mode",
 };
 
 export default function RootLayout({
